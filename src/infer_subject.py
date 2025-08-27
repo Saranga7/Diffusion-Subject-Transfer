@@ -15,8 +15,14 @@ def main():
    parser.add_argument('--strength', type = float, default = 0.5)
    parser.add_argument('--infer_steps', type = int, default = 30)
    parser.add_argument('--save_path', type = str, default='out')
+   parser.add_argument('--gpu', type = int, default = 1)
+   
    # parser.add_argument('--seed', type = int, default = 7)
    args = vars(parser.parse_args())
+
+   device = f"cuda:{args['gpu']}" if torch.cuda.is_available() else "cpu"
+
+
    pipeline = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5", safety_checker=None)
    pipeline.to(device)
 
