@@ -28,9 +28,7 @@ bash scripts/run_dreambooth_lora.sh > dreambooth_ft_lora.log 2>&1
 bash scripts/run_inference.sh
 ```
 
-## Instructions
-
-Some results:
+## Some Results
 
 \<vobj> : Dali (my pet dog)
 
