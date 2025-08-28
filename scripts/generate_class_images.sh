@@ -12,6 +12,7 @@ MODEL_NAME="runwayml/stable-diffusion-v1-5"
 python src/generate_images.py \
 --pretrained_model $MODEL_NAME \
 --guidance_scale $GUIDANCE_SCALE \
+--num_images $NUM_IMAGES \
 --prompt "$PROMPT" \
 --infer_steps 20 \
 --save_path "data/generated_$CLASS" \

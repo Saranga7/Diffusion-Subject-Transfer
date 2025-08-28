@@ -24,10 +24,10 @@ def generate(args):
     for i in tqdm(range(args.num_images)):
         out = pipeline(
             prompt,
-            num_inference_steps=args.infer_steps,
-            guidance_scale=args.guidance_scale,
-            height=args.height,
-            width=args.width,
+            num_inference_steps = args.infer_steps,
+            guidance_scale = args.guidance_scale,
+            height = args.height,
+            width = args.width,
         )
         img = out.images[0]
         img.save(out_dir / f"class_{i:04d}.png")
@@ -36,9 +36,9 @@ def generate(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pretrained_model", type = str, default="runwayml/stable-diffusion-v1-5")
-    parser.add_argument("--prompt", type = str, default="A dog", help="class prompt to generate images for")
+    parser.add_argument("--prompt", type = str, default = "A dog", help="class prompt to generate images for")
     parser.add_argument("--num_images", type = int, default = 200)
-    parser.add_argument("--save_path", type = str, default="./generated_class_images")
+    parser.add_argument("--save_path", type = str, default = "./generated_class_images")
     parser.add_argument("--infer_steps", type = int, default = 20)
     parser.add_argument("--guidance_scale", type=float, default = 7.5)
     parser.add_argument("--height", type = int, default = 512)

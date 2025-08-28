@@ -3,8 +3,8 @@
 export PYTHONPATH="$PYTHONPATH:$pwd"
 
 LORA_MODEL="dreambooth_lora_ckpt_dog"
-GUIDANCE_SCALE=7.5
-PROMPT="A photo of <vobj> dog wearing a suit and tie"
+GUIDANCE_SCALE=5
+PROMPT="A photo of <vobj> dog in the style of Van Gogh"
 
 python src/infer_subject.py \
 --pretrained_model_name "runwayml/stable-diffusion-v1-5" \

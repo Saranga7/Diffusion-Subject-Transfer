@@ -7,6 +7,8 @@ A popular method for subject transfer is DreamBooth (https://arxiv.org/abs/2208.
 
 ## Instructions
 
+(First 3 steps are exactly like in Task 1)
+
 1. Create virtual environment and install required packages from requirements.txt
 
 2. Generate class images
@@ -14,8 +16,6 @@ A popular method for subject transfer is DreamBooth (https://arxiv.org/abs/2208.
 ```
 bash scripts/generate_class_images.sh
 ```
-
-Then copy it to the root directory.
 
 3. Run Dreambooth LoRA fine-tuning with images of my pet dog.
 
@@ -32,13 +32,14 @@ bash scripts/run_inference.sh
 
 \<vobj> : Dali (my pet dog)
 
-1. Prompt: "A photo of \<vobj> in space"
+1. Prompt: "A photo of \<vobj> dog in space"
 
 ![Diagram](assets/Dali_in_space.png)`
 
 
-2. Prompt: "A photo of \<vobj> in front of the Eiffel Tower"
+2. Prompt: "A photo of \<vobj> dog in front of the Eiffel Tower"
 ![Diagram](assets/Dali_in_front_of_Eiffel_Tower.png)
 
-2. Prompt: "A photo of \<vobj> wearing a suit and tie"
-![Diagram](assets/Dali_in_suit_and_tie.png)
+
+3. Prompt: "A photo of \<vobj> dog wearing a suit and tie"
+![Diagram](assets/ouput_4_epoch5.png)
