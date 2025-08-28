@@ -2,14 +2,15 @@
 
 export PYTHONPATH="$PYTHONPATH:$pwd"
 
-LORA_MODEL="dreambooth_lora_ckpt"
-STRENGTH=0.4
-PROMPT="A photo of <vobj> wearing a suit and tie"
+LORA_MODEL="dreambooth_lora_ckpt_dog"
+GUIDANCE_SCALE=7.5
+PROMPT="A photo of <vobj> dog wearing a suit and tie"
 
 python src/infer_subject.py \
+--pretrained_model_name "runwayml/stable-diffusion-v1-5" \
 --lora_path "$LORA_MODEL/" \
---strength $STRENGTH \
+--guidance_scale $GUIDANCE_SCALE \
 --prompt "$PROMPT" \
 --infer_steps 30 \
---save_path "output" \
---gpu 1
+--save_path "ouput_$GUIDANCE_SCALE" \
+--gpu 0

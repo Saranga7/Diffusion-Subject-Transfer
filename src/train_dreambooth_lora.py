@@ -14,14 +14,13 @@ from dataset import DreamBoothDataset
 
 
 
-# ----- Training loop -----
 def train(args):
     device = f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
     print("Device:", device)
 
     # Load pipeline
     pipeline = StableDiffusionPipeline.from_pretrained(
-        args.pretrained_model_name_or_path,
+        args.pretrained_model_name,
         safety_checker = None,   
     )
     pipeline.to(device)
@@ -83,7 +82,6 @@ def train(args):
 
 
 
-    # Build dataset and dataloader
     DB_dataset = DreamBoothDataset(
         instance_folder = args.instance_data_dir,
         class_folder = args.class_data_dir,
@@ -109,14 +107,13 @@ def train(args):
             inst_imgs = inst_imgs.to(device)
             class_imgs = class_imgs.to(device)
 
-            # Build prompts
-            # inst_prompts = [args.instance_prompt.replace("{token}", new_token)]
-            inst_prompts = [args.instance_prompt.replace("{token}", new_token) for _ in range(batch_size)]
-            class_prompts = [args.class_prompt.replace("{class_word}", class_word) for _ in range(batch_size)]
+            # Build prompts for the batch
+            inst_prompts = [args.instance_prompt for _ in range(batch_size)]
+            class_prompts = [args.class_prompt for _ in range(batch_size)]
 
             # Tokenize prompts
-            inst_tokens = tokenizer(inst_prompts, padding=True, return_tensors="pt").to(device)
-            class_tokens = tokenizer(class_prompts, padding=True, return_tensors="pt").to(device)
+            inst_tokens = tokenizer(inst_prompts, padding = True, return_tensors="pt").to(device)
+            class_tokens = tokenizer(class_prompts, padding = True, return_tensors="pt").to(device)
 
             # Encode text -> hidden states
             inst_hidden = pipeline.text_encoder(**inst_tokens).last_hidden_state
@@ -142,7 +139,7 @@ def train(args):
             # compute MSE
             loss_inst = F.mse_loss(noise_pred_inst, noise_inst)
             loss_class = F.mse_loss(noise_pred_class, noise_class)
-            loss = loss_inst + args.prior_loss_weight * loss_class
+            loss = loss_inst + args.class_preservation_weight * loss_class
 
             optimizer.zero_grad()
             loss.backward()
@@ -183,20 +180,22 @@ def save_checkpoints(pipeline, tokenizer, out_dir, step = None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pretrained_model_name_or_path", type = str, default = "runwayml/stable-diffusion-v1-5")
-    parser.add_argument("--instance_data_dir", type = str, required=True, help = "Folder with subject (instance) images")
-    parser.add_argument("--class_data_dir", type = str, required=True, help = "Folder with class images (prior preservation)")
+    parser.add_argument("--pretrained_model_name", type = str, default = "runwayml/stable-diffusion-v1-5")
+    parser.add_argument("--instance_data_dir", type = str, required = True, help = "Folder with subject images")
+    parser.add_argument("--class_data_dir", type = str, required = True, help = "Folder with class images (for prior preservation)")
     parser.add_argument("--instance_token", type = str, default = "<my_subject>", help = "New token to learn")
     parser.add_argument("--class_word", type = str, default = "person", help = "Class word (e.g., 'person', 'dog')")
-    parser.add_argument("--instance_prompt", type = str, default = "A photo of {token}", help = "Prompt template for instance images")
-    parser.add_argument("--class_prompt", type = str, default = "A photo of a {class_word}", help = "Prompt template for class images")
+    parser.add_argument("--instance_prompt", type = str, required = True)
+    parser.add_argument("--class_prompt", type = str, required = True)
+
     parser.add_argument("--image_size", type = int, default = 512)
     parser.add_argument("--batch_size", type = int, default = 2)
-    parser.add_argument("--num_epochs", type = int, default = 100)
+    parser.add_argument("--num_epochs", type = int, default = 50)
+
     parser.add_argument("--max_train_steps", type = int, default = 2000)
     parser.add_argument("--lr", type = float, default = 1e-4)
     parser.add_argument("--train_strength", type = float, default = 0.3)
-    parser.add_argument("--prior_loss_weight", type = float, default = 1.0)
+    parser.add_argument("--class_preservation_weight", type = float, default = 1.0)
     parser.add_argument("--lora_r", type = int, default = 16)
     parser.add_argument("--lora_alpha", type = int, default = 32)
     parser.add_argument("--lora_dropout", type = float, default = 0.05)
